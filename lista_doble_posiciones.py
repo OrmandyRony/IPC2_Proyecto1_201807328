@@ -1,12 +1,11 @@
-from _typeshed import Self
 from posicion import Posicion
 
 class Lista_posiciones():
     def __init__(self) -> None:
         self.inicio = None
     
-    def insertar(self, posicion_x, posicion_y):
-        nueva_posicion = Posicion(posicion_x, posicion_y)
+    def insertar(self, posicion_x, posicion_y, cantidad_combustible):
+        nueva_posicion = Posicion(posicion_x, posicion_y, cantidad_combustible)
 
         if self.inicio is None:
             self.inicio = nueva_posicion
