@@ -22,3 +22,12 @@ class Lista_posiciones():
         while temporal is not None:
             print('Posicion X: ', temporal.posicion_x, 'Posicion Y: ', temporal.posicion_y)
             temporal = temporal.siguiente
+
+
+    def get_posicion(self, posicionx, posiciony):
+        posicion = self.inicio
+        while posicion is not None:
+            if posicionx == posicion.posicion_x and posicion.posicion_y:
+                return posicion
+            posicion = posicion.siguiente
+        return None
