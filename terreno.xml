@@ -1,5 +1,9 @@
 <terrenos>
     <terreno nombre="terreno1">
+        <dimension>
+            <m>3</m>
+            <n>3</n>
+        </dimension>
         <posicioninicio>
             <x>1</x>
             <y>1</y>

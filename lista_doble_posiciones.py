@@ -4,8 +4,8 @@ class Lista_posiciones():
     def __init__(self) -> None:
         self.inicio = None
     
-    def insertar(self, posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar):
-        nueva_posicion = Posicion(posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar)
+    def insertar(self, posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar, posicion_2D):
+        nueva_posicion = Posicion(posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar, posicion_2D)
 
         if self.inicio is None:
             self.inicio = nueva_posicion
@@ -19,9 +19,11 @@ class Lista_posiciones():
     
     def mostrar_posiciones(self):
         temporal = self.inicio
+        grafica = ""
         while temporal is not None:
-            print('Posicion X: ', temporal.posicion_x, 'Posicion Y: ', temporal.posicion_y)
+            grafica += temporal.posicion_2D
             temporal = temporal.siguiente
+        return grafica
 
 
     def get_posicion(self, posicionx, posiciony):
