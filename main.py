@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 def cargar_archivo(ruta, trayectorias):
     tree = ET.parse(ruta)
     root = tree.getroot()
+    posicion_sin_usar = True
 
     for terrenos in root:
         posicion_final_x = 0
@@ -35,12 +36,16 @@ def cargar_archivo(ruta, trayectorias):
 
         for posiciones in terrenos.iter('posicion'):
             terreno = trayectorias.get_terreno(terrenos.attrib['nombre'])
-            terreno.lista_posiciones.insertar(int(posiciones.attrib['x']), int(posiciones.attrib['y']), int(posiciones.text))
+            terreno.lista_posiciones.insertar(int(posiciones.attrib['x']), int(posiciones.attrib['y']), int(posiciones.text), posicion_sin_usar)
             print('Se le asigno al terreno ',terrenos.attrib['nombre'], ' las coordenadas ', posiciones.attrib['x'], posiciones.attrib['y'],' y el combustible', posiciones.text)
 
 
-def procesar_archivo():
-    pass
+def procesar_archivo(trayectorias):
+    primer_terreno = trayectorias.inicio
+    while primer_terreno is not None:
+        print(primer_terreno.nombre_terreno)
+        primer_terreno = primer_terreno.siguiente
+    
 
 
 def escribir_archivo():
@@ -80,9 +85,9 @@ def menu():
             cargar_archivo(file, lista_trayectorias)
         
         elif opcion == '2':
-            lista_trayectorias.calcular_trayectoria()
+            #lista_trayectorias.calcular_trayectoria(lista_trayectorias)
             print("Ejecuto la posicion 2")
-            #procesar_archivo()
+            procesar_archivo(lista_trayectorias)
         
         elif opcion == '3':
             escribir_archivo()

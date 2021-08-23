@@ -41,6 +41,7 @@ class Lista_trayectorias():
 
     def calcular_trayectoria(self):
         terreno_inicial = self.inicio
+
         while terreno_inicial is not None:
             print("Nombre del terreno: ", terreno_inicial.nombre_terreno)
             posicion_inicial_x = terreno_inicial.posicion_inicial_x
@@ -49,57 +50,97 @@ class Lista_trayectorias():
             posicion_final_x = terreno_inicial.posicion_final_x
             posicion_final_y = terreno_inicial.posicion_final_y
 
-            direccion_x = posicion_final_x - posicion_inicial_x
-            direccion_y = posicion_final_y - posicion_inicial_y
-            x = 0
-            y = 0
+            posicion_temporal_x = posicion_inicial_x
+            posicion_temporal_y = posicion_inicial_y
 
-
-            if (direccion_x < 0 or direccion_y < 0):
-                x = -1
-                y = -1
-
-            elif (direccion_x > 0 or direccion_y > 0):
-                x = 1
-                y = 1
-
-            elif (direccion_x < 0 or direccion_y > 0):
-                x = -1
-                y = 1
+            llego_al_destino = (posicion_final_x == posicion_temporal_x and posicion_final_y == posicion_temporal_y)
             
-            elif (direccion_x > 0 or direccion_y < 0):
-                x = 1
-                y = -1
+            
 
-            elif (direccion_x < 0 or direccion_y == 0):
-                x = -1
-                y = 0
-            
-            elif (direccion_x == 0 or direccion_y < 0):
-                x = 0
-                y = -1
-            
-            elif (direccion_x == 0 or direccion_y > 0):
-                x = 0
-                y = 1
-            
-            elif (direccion_x == 0 or direccion_y == 0):
+
+            while not llego_al_destino:
+                direccion_x = posicion_final_x - posicion_temporal_x
+                direccion_y = posicion_final_y - posicion_temporal_y
                 x = 0
                 y = 0
 
+                # Derecha, Arriba
+                if (direccion_x > 0 and direccion_y > 0):
+                    x = 1
+                    y = 1
 
+                # Izquierda, Arriba
+                elif (direccion_x < 0 and direccion_y > 0):
+                    x = -1
+                    y = 1
+                
+                # Derecha, Abajo
+                elif (direccion_x > 0 and direccion_y < 0):
+                    x = 1
+                    y = -1
+                
+                # Izquierda, Abajo
+                elif (direccion_x < 0 and direccion_y > 0):
+                    x = -1
+                    y = -1
 
-            posicion = terreno_inicial.lista_posiciones.get_posicion(posicion_inicial_x, posicion_inicial_y)
-            posicion1 = posicion.siguiente
-            posicion2 = terreno_inicial.lista_posiciones.get_posicion(posicion_inicial_x + x, posicion_inicial_y)
+                # Derecha, Neutro
+                elif (direccion_x > 0 and direccion_y == 0):
+                    x = 1
+                    y = 0
 
-            print("Posición inicial x: ", posicion.posicion_x , "Posición inicial y: ", posicion.posicion_y)
+                # Izquierda, Neutro
+                elif (direccion_x < 0 and direccion_y == 0):
+                    x = -1
+                    y = 0
+                
+                # Neutro, Arriba
+                elif (direccion_x == 0 and direccion_y > 0):
+                    x = 0
+                    y = 1
 
+                # Neutro, Abajo
+                elif (direccion_x == 0 and direccion_y < 0):
+                    x = 0
+                    y = -1
 
+                movimiento_y = posicion_temporal_y + y
             
-            if posicion1.cantidad_combustible < posicion2.cantidad_combustible:
-                print("Movimiento 1, x: ", posicion1.posicion_x, " y:", posicion1.posicion_y)
+                posicion_1 = terreno_inicial.lista_posiciones.get_posicion(posicion_temporal_x + x, posicion_temporal_y)
+                posicion_2 = terreno_inicial.lista_posiciones.get_posicion(posicion_temporal_x, movimiento_y)
+                
+                #print("Posición inicial x: ", posicion.posicion_x , "Posición inicial y: ", posicion.posicion_y)
+                if posicion_1.posicion_sin_usar and posicion_2.posicion_sin_usar:
+
+                    if posicion_1.cantidad_combustible < posicion_2.cantidad_combustible:
+                        print("Movimiento x: ", posicion_1.posicion_x, " y: ", posicion_1.posicion_y)
+                        posicion_temporal_x = posicion_1.posicion_x
+                        posicion_temporal_y = posicion_1.posicion_y
+                        posicion_1.posicion_sin_usar = False
+                    
+                    else: 
+                        print("Movimiento x: ", posicion_2.posicion_x, " y: ", posicion_2.posicion_y)
+                        posicion_temporal_x = posicion_2.posicion_x
+                        posicion_temporal_y = posicion_2.posicion_y
+                        posicion_2.posicion_sin_usar = False
+                
+                elif posicion_1.posicion_sin_usar:
+                    print("Movimiento x: ", posicion_1.posicion_x, " y: ", posicion_1.posicion_y)
+                    posicion_temporal_x = posicion_1.posicion_x
+                    posicion_temporal_y = posicion_1.posicion_y
+                    posicion_1.posicion_sin_usar = False
+
+                elif posicion_2.posicion_sin_usar:
+                    print("Movimiento x: ", posicion_2.posicion_x, " y: ", posicion_2.posicion_y)
+                    posicion_temporal_x = posicion_2.posicion_x
+                    posicion_temporal_y = posicion_2.posicion_y
+                    posicion_2.posicion_sin_usar = False
+
+                
+                llego_al_destino = (posicion_final_x == posicion_temporal_x and posicion_final_y == posicion_temporal_y)
+
             terreno_inicial = terreno_inicial.siguiente
+
         return None
 
             

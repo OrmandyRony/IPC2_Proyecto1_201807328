@@ -4,8 +4,8 @@ class Lista_posiciones():
     def __init__(self) -> None:
         self.inicio = None
     
-    def insertar(self, posicion_x, posicion_y, cantidad_combustible):
-        nueva_posicion = Posicion(posicion_x, posicion_y, cantidad_combustible)
+    def insertar(self, posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar):
+        nueva_posicion = Posicion(posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar)
 
         if self.inicio is None:
             self.inicio = nueva_posicion
@@ -27,7 +27,7 @@ class Lista_posiciones():
     def get_posicion(self, posicionx, posiciony):
         posicion = self.inicio
         while posicion is not None:
-            if posicionx == posicion.posicion_x and posicion.posicion_y:
+            if posicionx == posicion.posicion_x and posiciony == posicion.posicion_y:
                 return posicion
             posicion = posicion.siguiente
         return None
