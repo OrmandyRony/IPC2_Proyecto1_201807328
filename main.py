@@ -51,26 +51,36 @@ def cargar_archivo(ruta, trayectorias):
             print('Se le asigno al terreno ',terrenos.attrib['nombre'], ' las coordenadas ', posiciones.attrib['x'], posiciones.attrib['y'],' y el combustible', posiciones.text)
 
 
-def calculo_trayectorias(trayectorias):
+"""
+def calculo_trayectoria(trayectorias):
+    # Algoritmo Dijskstra
     terreno = trayectorias.inicio
-
+    
     while terreno is not None:
             print("Nombre del terreno: ", terreno.nombre_terreno)
             cantidad_combustible = 0
+            terreno.posicion_2D = "|1|"
             posicion_inicial_x = terreno.posicion_inicial_x
             posicion_inicial_y = terreno.posicion_inicial_y
-
-            posicion_inicial_x.posicion_2D = "|1|"
-            posicion_inicial_x.posicion_2D = "|1|"
-            
+                              
             posicion_final_x = terreno.posicion_final_x
             posicion_final_y = terreno.posicion_final_y
+
+            # Algoritmo Dijskstra
 
             posicion_temporal_x = posicion_inicial_x
             posicion_temporal_y = posicion_inicial_y
 
-            llego_al_destino = (posicion_final_x == posicion_temporal_x and posicion_final_y == posicion_temporal_y)
             
+            posicion_inicial = terreno.lista_posiciones.get_posicion(posicion_inicial_x, posicion_inicial_y)
+            # 1 y 2
+            cantidad_combustible = posicion_inicial.cantidad_combustible
+            
+            while terreno.lista_posiciones.recorrido:
+                
+
+
+
             while not llego_al_destino:
                 direccion_x = posicion_final_x - posicion_temporal_x
                 direccion_y = posicion_final_y - posicion_temporal_y
@@ -162,11 +172,154 @@ def calculo_trayectorias(trayectorias):
                     grafica = terreno.lista_posiciones.mostrar_posiciones()
                     dimension = terreno.dimension_y
                     longitud = 3 * terreno.dimension_x
+                    #print(grafica)
                     for i in range(1, dimension + 1):
                         print(grafica[(i-1)*longitud:i*longitud])
                     print(cantidad_combustible ,"\n")
 
             terreno = terreno.siguiente
+"""
+
+
+def calculo(trayectorias):
+    terreno = trayectorias.inicio
+
+    while terreno is not None:
+        print("Nombre del terreno: ", terreno.nombre_terreno)
+        terreno.posicion_2D = "|1|"
+        posicion_inicial_x = terreno.posicion_inicial_x
+        posicion_inicial_y = terreno.posicion_inicial_y
+                            
+        posicion_final_x = terreno.posicion_final_x
+        posicion_final_y = terreno.posicion_final_y
+
+        dimencion_x = terreno.dimension_x
+        dimencion_y = terreno.dimension_y
+
+        terreno.lista_posiciones.dijkstra(posicion_inicial_x, posicion_inicial_y, dimencion_x, dimencion_y)
+        terreno.lista_posiciones.camino(posicion_final_x, posicion_final_y, posicion_inicial_x, posicion_inicial_y)
+        terreno = terreno.siguiente
+
+
+def calculo_trayectorias(trayectorias):
+    terreno = trayectorias.inicio
+
+    while terreno is not None:
+            print("Nombre del terreno: ", terreno.nombre_terreno)
+            cantidad_combustible = 0
+            terreno.posicion_2D = "|1|"
+            posicion_inicial_x = terreno.posicion_inicial_x
+            posicion_inicial_y = terreno.posicion_inicial_y
+                              
+            posicion_final_x = terreno.posicion_final_x
+            posicion_final_y = terreno.posicion_final_y
+
+            posicion_temporal_x = posicion_inicial_x
+            posicion_temporal_y = posicion_inicial_y
+
+            llego_al_destino = (posicion_final_x == posicion_temporal_x and posicion_final_y == posicion_temporal_y)
+            posicion_inicial = terreno.lista_posiciones.get_posicion(posicion_inicial_x, posicion_inicial_y)
+            cantidad_combustible = posicion_inicial.cantidad_combustible
+
+            while not llego_al_destino:
+                direccion_x = posicion_final_x - posicion_temporal_x
+                direccion_y = posicion_final_y - posicion_temporal_y
+                x = 0
+                y = 0
+
+                # Derecha, Arriba
+                if (direccion_x > 0 and direccion_y > 0):
+                    x = 1
+                    y = 1
+
+                # Izquierda, Arriba
+                elif (direccion_x < 0 and direccion_y > 0):
+                    x = -1
+                    y = 1
+                
+                # Derecha, Abajo
+                elif (direccion_x > 0 and direccion_y < 0):
+                    x = 1
+                    y = -1
+                
+                # Izquierda, Abajo
+                elif (direccion_x < 0 and direccion_y > 0):
+                    x = -1
+                    y = -1
+
+                # Derecha, Neutro
+                elif (direccion_x > 0 and direccion_y == 0):
+                    x = 1
+                    y = 0
+
+                # Izquierda, Neutro
+                elif (direccion_x < 0 and direccion_y == 0):
+                    x = -1
+                    y = 0
+                
+                # Neutro, Arriba
+                elif (direccion_x == 0 and direccion_y > 0):
+                    x = 0
+                    y = 1
+
+                # Neutro, Abajo
+                elif (direccion_x == 0 and direccion_y < 0):
+                    x = 0
+                    y = -1
+
+                movimiento_y = posicion_temporal_y + y
+            
+                posicion_1 = terreno.lista_posiciones.get_posicion(posicion_temporal_x + x, posicion_temporal_y)
+                posicion_2 = terreno.lista_posiciones.get_posicion(posicion_temporal_x, movimiento_y)
+                
+                #print("Posición inicial x: ", posicion.posicion_x , "Posición inicial y: ", posicion.posicion_y)
+                if posicion_1.posicion_sin_usar and posicion_2.posicion_sin_usar:
+
+                    if posicion_1.cantidad_combustible < posicion_2.cantidad_combustible:
+                        print("Movimiento x: ", posicion_1.posicion_x, " y: ", posicion_1.posicion_y)
+                        cantidad_combustible += posicion_1.cantidad_combustible
+                        posicion_temporal_x = posicion_1.posicion_x
+                        posicion_temporal_y = posicion_1.posicion_y
+                        posicion_1.posicion_2D = "|1|"
+                        posicion_1.posicion_sin_usar = False
+                    
+                    else: 
+                        print("Movimiento x: ", posicion_2.posicion_x, " y: ", posicion_2.posicion_y)
+                        cantidad_combustible += posicion_2.cantidad_combustible
+                        posicion_temporal_x = posicion_2.posicion_x
+                        posicion_temporal_y = posicion_2.posicion_y
+                        posicion_2.posicion_2D = "|1|"
+                        posicion_2.posicion_sin_usar = False
+                
+                elif posicion_1.posicion_sin_usar:
+                    print("Movimiento x: ", posicion_1.posicion_x, " y: ", posicion_1.posicion_y)
+                    cantidad_combustible += posicion_1.cantidad_combustible
+                    posicion_temporal_x = posicion_1.posicion_x
+                    posicion_temporal_y = posicion_1.posicion_y
+                    posicion_1.posicion_2D = "|1|"
+                    posicion_1.posicion_sin_usar = False
+
+                elif posicion_2.posicion_sin_usar:
+                    print("Movimiento x: ", posicion_2.posicion_x, " y: ", posicion_2.posicion_y)
+                    cantidad_combustible += posicion_2.cantidad_combustible
+                    posicion_temporal_x = posicion_2.posicion_x
+                    posicion_temporal_y = posicion_2.posicion_y
+                    posicion_2.posicion_2D = "|1|"
+                    posicion_2.posicion_sin_usar = False
+
+                llego_al_destino = (posicion_final_x == posicion_temporal_x and posicion_final_y == posicion_temporal_y)
+                if(llego_al_destino):
+                    grafica = terreno.lista_posiciones.mostrar_posiciones()
+                    dimension = terreno.dimension_y
+                    longitud = 3 * terreno.dimension_x
+                    #print(grafica)
+                    for i in range(1, dimension + 1):
+                        print(grafica[(i-1)*longitud:i*longitud])
+                    print(cantidad_combustible ,"\n")
+
+            terreno = terreno.siguiente
+
+
 
 
 def escribir_archivo():
@@ -185,6 +338,8 @@ Ingenieria en Ciencias y Sistemas
 
 
 def menu():
+    print("")
+    
     opcion = ''
     lista_trayectorias = Lista_trayectorias()
     print("""------------------------------ ROBOT R2E2 ------------------------------""")
@@ -206,10 +361,11 @@ def menu():
             cargar_archivo(file, lista_trayectorias)
         
         elif opcion == '2':
-            calculo_trayectorias(lista_trayectorias)
+            # calculo_trayectorias(lista_trayectorias)
             #lista_trayectorias.calcular_trayectoria(lista_trayectorias)
             #print("Ejecuto la posicion 2")
             #procesar_archivo(lista_trayectorias)
+            calculo(lista_trayectorias)
         
         elif opcion == '3':
             escribir_archivo()
