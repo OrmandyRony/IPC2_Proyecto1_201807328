@@ -4,6 +4,7 @@ class Lista_posiciones():
     def __init__(self) -> None:
         self.inicio = None
         self.tamano = 0
+        self.consumo_combustible_terreno = 0
     
     def insertar(self, posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar, posicion_2D):
         nueva_posicion = Posicion(posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar, posicion_2D)
@@ -25,9 +26,17 @@ class Lista_posiciones():
         while temporal is not None:
             grafica += temporal.posicion_2D
             temporal = temporal.siguiente
-        grafica = grafica[::-1]
+        #grafica = grafica[::-1]
         return grafica
 
+    def mostrar(self):
+        temporal = self.inicio
+        grafica = ""
+        while temporal is not None:
+            grafica += ("("+ str(temporal.posicion_x)+ "," + str(temporal.posicion_y)+")")
+            temporal = temporal.siguiente
+        #grafica = grafica[::-1]
+        return grafica
 
     def get_posicion(self, posicionx, posiciony):
         posicion = self.inicio
@@ -52,15 +61,22 @@ class Lista_posiciones():
     def camino(self, posicion_final_x, posicion_final_y, posicion_inicial_x, posicion_inicial_y):
         posicion_final = self.get_posicion(posicion_final_x, posicion_final_y)
         posicion_inicial = self.get_posicion(posicion_inicial_x, posicion_inicial_y)
+        posicion_inicial.posicion_2D = "|1|"
         posicion = posicion_final
-        
-        print(posicion_final.combutible)
-        print(posicion_final.posicion_x, posicion_final.posicion_y)
-        
+        self.consumo_combustible_terreno = posicion_final.combutible
+        print("Cantidad de combustible gastada: " + str(self.consumo_combustible_terreno))
+        #print(posicion_final.posicion_x, posicion_final.posicion_y)        
         while posicion is not posicion_inicial:
-            print(posicion.predecesor_x, posicion.predecesor_y)
+            #print(posicion.predecesor_x, posicion.predecesor_y)
+            posicion.posicion_2D = "|1|"
             posicion = self.get_posicion(posicion.predecesor_x, posicion.predecesor_y)
 
+        
+
+    def cantidad_combustible(self, posicion_final_x, posicion_final_y):
+        posicion_final = self.get_posicion(posicion_final_x, posicion_final_y)
+           
+        return posicion_final.combutible
         
 
     def costo_minimo(self):

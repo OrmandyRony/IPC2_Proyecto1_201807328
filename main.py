@@ -1,6 +1,25 @@
 from lista_simple_trayectorias import Lista_trayectorias
 import xml.etree.ElementTree as ET
 
+cantidad_combustible = 9999
+
+def indent(elem, level=0):                                                                                         
+    i = "\n" + level*"  "                                                                                          
+    j = "\n" + (level-1)*"  "                                                                                      
+    if len(elem):                                                                                                  
+        if not elem.text or not elem.text.strip():                                                                 
+            elem.text = i + "  "                                                                                   
+        if not elem.tail or not elem.tail.strip():                                                                 
+            elem.tail = i                                                                                          
+        for subelem in elem:                                                                                       
+            indent(subelem, level+1)                                                                               
+        if not elem.tail or not elem.tail.strip():                                                                 
+            elem.tail = j                                                                                          
+    else:                                                                                                          
+        if level and (not elem.tail or not elem.tail.strip()):                                                     
+            elem.tail = j                                                                                          
+    return elem     
+
 def cargar_archivo(ruta, trayectorias):
     tree = ET.parse(ruta)
     root = tree.getroot()
@@ -14,7 +33,7 @@ def cargar_archivo(ruta, trayectorias):
         dimensionx = 0
         dimensiony  = 0 
 
-        print('Terreno ', terrenos.attrib['nombre'], 'ha sido insertado.')
+        print('Terreno ', terrenos.attrib['nombre'], 'ha sido ingresado.')
         nombre_terreno = terrenos.attrib['nombre']
 
 
@@ -48,7 +67,7 @@ def cargar_archivo(ruta, trayectorias):
             posicion_y = int(posiciones.attrib['y'])
             cantidad_combustible = int(posiciones.text)
             terreno.lista_posiciones.insertar(posicion_x, posicion_y, cantidad_combustible, posicion_sin_usar,"|0|")
-            print('Se le asigno al terreno ',terrenos.attrib['nombre'], ' las coordenadas ', posiciones.attrib['x'], posiciones.attrib['y'],' y el combustible', posiciones.text)
+            #print('Se le asigno al terreno ',terrenos.attrib['nombre'], ' las coordenadas ', posiciones.attrib['x'], posiciones.attrib['y'],' y el combustible', posiciones.text)
 
 
 """
@@ -169,13 +188,7 @@ def calculo_trayectoria(trayectorias):
 
                 llego_al_destino = (posicion_final_x == posicion_temporal_x and posicion_final_y == posicion_temporal_y)
                 if(llego_al_destino):
-                    grafica = terreno.lista_posiciones.mostrar_posiciones()
-                    dimension = terreno.dimension_y
-                    longitud = 3 * terreno.dimension_x
-                    #print(grafica)
-                    for i in range(1, dimension + 1):
-                        print(grafica[(i-1)*longitud:i*longitud])
-                    print(cantidad_combustible ,"\n")
+                    
 
             terreno = terreno.siguiente
 """
@@ -185,21 +198,41 @@ def calculo(trayectorias):
     terreno = trayectorias.inicio
 
     while terreno is not None:
-        print("Nombre del terreno: ", terreno.nombre_terreno)
-        terreno.posicion_2D = "|1|"
-        posicion_inicial_x = terreno.posicion_inicial_x
-        posicion_inicial_y = terreno.posicion_inicial_y
-                            
-        posicion_final_x = terreno.posicion_final_x
-        posicion_final_y = terreno.posicion_final_y
+        if not terreno.procesado:
+            print("Nombre del terreno: ", terreno.nombre_terreno)
+            terreno.posicion_2D = "|1|"
+            posicion_inicial_x = terreno.posicion_inicial_x
+            posicion_inicial_y = terreno.posicion_inicial_y
+                                
+            posicion_final_x = terreno.posicion_final_x
+            posicion_final_y = terreno.posicion_final_y
 
-        dimencion_x = terreno.dimension_x
-        dimencion_y = terreno.dimension_y
+            dimencion_x = terreno.dimension_x
+            dimencion_y = terreno.dimension_y
 
-        terreno.lista_posiciones.dijkstra(posicion_inicial_x, posicion_inicial_y, dimencion_x, dimencion_y)
-        terreno.lista_posiciones.camino(posicion_final_x, posicion_final_y, posicion_inicial_x, posicion_inicial_y)
+            terreno.lista_posiciones.dijkstra(posicion_inicial_x, posicion_inicial_y, dimencion_x, dimencion_y)
+            terreno.lista_posiciones.camino(posicion_final_x, posicion_final_y, posicion_inicial_x, posicion_inicial_y)
+            
+            grafica = terreno.lista_posiciones.mostrar_posiciones()
+            dimension = terreno.dimension_x
+            longitud = 3 * terreno.dimension_y
+
+            #print(grafica)
+
+            for i in range(1, dimension + 1):
+                print(grafica[(i-1)*longitud:(i)*longitud])
+            """
+            grafica = terreno.lista_posiciones.mostrar_posiciones()
+            dimension = terreno.dimension_y
+            longitud = 3 * terreno.dimension_x
+            #print(grafica)
+            for i in range(1, dimension + 1):
+                print(grafica[(i-1)*longitud:i*longitud])
+            """
+            print("")
+            terreno.procesado = True
         terreno = terreno.siguiente
-
+    
 
 def calculo_trayectorias(trayectorias):
     terreno = trayectorias.inicio
@@ -322,9 +355,36 @@ def calculo_trayectorias(trayectorias):
 
 
 
-def escribir_archivo():
-    pass
+def escribir_archivo(ruta, terreno):
 
+    
+    terreno_escribir = ET.Element("terreno")
+    posicion_inicial_x = terreno.posicion_inicial_x
+    posicion_inicial_y = terreno.posicion_inicial_y
+    #posicion = terreno.lista_posiciones.get_posicion(posicion_inicial_x, posicion_inicial_y)
+    posiciones = terreno.lista_posiciones
+
+    posicion_inicio = ET.SubElement(terreno_escribir, "posicioninicio")
+    ET.SubElement(posicion_inicio, "x").text = str(terreno.posicion_inicial_x)
+    ET.SubElement(posicion_inicio, "y").text = str(terreno.posicion_inicial_y)
+
+    posicion_fin = ET.SubElement(terreno_escribir, "posicionfin")
+    ET.SubElement(posicion_fin, "x").text = str(terreno.posicion_final_x)
+    ET.SubElement(posicion_fin, "y").text = str(terreno.posicion_final_y)
+
+    ET.SubElement(terreno_escribir, "combustible").text = str(posiciones.consumo_combustible_terreno)
+    
+    posicion = posiciones.inicio
+
+    while posicion is not None:
+        if posicion.posicion_2D == "|1|":
+            ET.SubElement(terreno_escribir, "posicion", x = str(posicion.posicion_x), y = str(posicion.posicion_y)).text = "1"
+        posicion = posicion.siguiente
+
+
+        
+    archivo1 = ET.ElementTree(terreno_escribir)
+    archivo1.write(ruta)
 
 def generar_grafica():
     pass
@@ -344,10 +404,11 @@ def menu():
     lista_trayectorias = Lista_trayectorias()
     print("""------------------------------ ROBOT R2E2 ------------------------------""")
     while opcion != '6':
+        print("")
         print("""Menú principal:
 1. Cargar archivo
 2. Procesar archivo
-3. Escribir archivo de salida
+3. Escribir archivo XML de salida 
 4. Mostrar datos del estudiante
 5. Generar gráfica
 6. Salida
@@ -366,9 +427,18 @@ def menu():
             #print("Ejecuto la posicion 2")
             #procesar_archivo(lista_trayectorias)
             calculo(lista_trayectorias)
+            lista_trayectorias.combustible_existente()
+            print("Combustible existente: "+ str(lista_trayectorias.combustible) + " unidades")
         
         elif opcion == '3':
-            escribir_archivo()
+            print("Los nombres de los terrenos son: ")
+            lista_trayectorias.imprimir_terrenos()
+            nombre_terreno = input("Ingrese el nombre de uno de los terrenos: ")
+            terreno = lista_trayectorias.get_terreno(nombre_terreno)
+            
+            ruta = input("Escriba la ruta: ")
+
+            escribir_archivo(ruta, terreno)
         
         elif opcion == '4':
             mostrar_datos()

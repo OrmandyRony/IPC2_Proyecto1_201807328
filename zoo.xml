@@ -1,0 +1,16 @@
+<zoo>
+    <mamiferos>
+        <animal /><animal />
+        <animal /><animal />
+    </mamiferos>
+    <reptiles>
+        <animal />
+        <animal />
+        <animal /><animal />
+    </reptiles>
+    <aves>
+        <animal />
+        <animal /><animal />
+        <animal />
+    </aves>
+</zoo>

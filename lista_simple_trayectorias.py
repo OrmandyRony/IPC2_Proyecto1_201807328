@@ -5,6 +5,7 @@ class Lista_trayectorias():
         self.inicio = None
         self.fin = None
         self.size =0
+        self.combustible = 9999
     
 
     def crear_terreno(self, nombre_terreno, posicion_inicial_x, posicion_inicial_y, posicion_final_x, posicion_final_y, dimension_x, dimension_y, cantidad_combustible):
@@ -32,12 +33,23 @@ class Lista_trayectorias():
 
     def imprimir_terrenos(self):
         terreno = self.inicio
+        contador = 1
         while terreno is not None:
-            print(terreno.nombre_terreno)
+            print(str(contador) + ". " + terreno.nombre_terreno)
+            contador += 1
             terreno = terreno.siguiente
         return None
 
+    def combustible_existente(self):
+        trayectoria_temporal = self.inicio
+        while trayectoria_temporal is not None:
+            combustible_gastado = trayectoria_temporal.lista_posiciones.cantidad_combustible(trayectoria_temporal.posicion_final_x, trayectoria_temporal.posicion_final_y)
+            self.combustible -= combustible_gastado
+            trayectoria_temporal = trayectoria_temporal.siguiente
+        return None
+        
 
+        
 
 
 

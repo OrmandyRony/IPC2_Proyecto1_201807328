@@ -13,6 +13,8 @@ class Trayectoria_robot():
         self.dimension_x = dimension_x
         self.dimension_y = dimension_y
         self.cantidad_combustible = cantidad_combustible
+
+        self.procesado = False
         
         self.lista_posiciones = Lista_posiciones()
         self.siguiente = None
