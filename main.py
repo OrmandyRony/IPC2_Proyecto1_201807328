@@ -1,4 +1,3 @@
-
 from os import system, startfile
 from lista_simple_trayectorias import Lista_trayectorias
 import xml.etree.ElementTree as ET
