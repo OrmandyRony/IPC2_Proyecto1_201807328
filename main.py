@@ -1,3 +1,5 @@
+
+from os import system, startfile
 from lista_simple_trayectorias import Lista_trayectorias
 import xml.etree.ElementTree as ET
 
@@ -386,8 +388,95 @@ def escribir_archivo(ruta, terreno):
     archivo1 = ET.ElementTree(terreno_escribir)
     archivo1.write(ruta)
 
-def generar_grafica():
-    pass
+def generar_grafica(terreno):
+    graphviz = """
+    digraph L{
+    node[shape = ellipse fillcolor = "yellow" style = filled]
+    
+
+    subgraph cluster_p{
+        label = \""""+str(terreno.nombre_terreno) +"""\"
+        bgcolor = "white"
+        raiz[label = "F/C"]
+        edge[dir = "none"]
+        /*Aqui creamos las cabeceras de las filas */
+        """ 
+    filas = ""
+    for i in range(1, terreno.dimension_x + 1):
+        filas += "Fila"+ str(i) +"[label = \""+ str(i) + """\", group = 1];\n""" 
+    
+    for i in range(1, terreno.dimension_x):
+        filas += """Fila"""+ str(i) +"""->Fila"""+str(i+1)+";\n"
+    
+    graphviz += filas
+
+    columnas = ""
+    for i in range(1, terreno.dimension_y + 1):
+        columnas += "Columna"+ str(i) +"[label = \""+ str(i) + """\", group = """+str(i+1) +", fillcolor = yellow];\n""" 
+
+    for i in range(1, terreno.dimension_y):
+        columnas += "Columna"+ str(i) +"->Columna"+str(i+1)+";\n"
+        
+    graphviz += columnas
+
+    graphviz += """raiz -> Fila1;
+       raiz -> Columna1;
+       {rank = same; raiz; """
+    
+    rank = ""
+    for i in range(1, terreno.dimension_y + 1):
+        rank += "Columna"+ str(i) +";"
+    
+    graphviz += rank
+    graphviz += "}"
+
+    posiciones = terreno.lista_posiciones.inicio
+    
+    nodo = ""
+    while posiciones is not None:
+        nodo += "nodo"+ str(posiciones.posicion_x) +"_"+ str(posiciones.posicion_y) +"[label=\""+str(posiciones.posicion_x)+","+str(posiciones.posicion_y)+"\", fillcolor = green, group = "+str((posiciones.posicion_y + 1))+"]\n"
+        posiciones = posiciones.siguiente
+
+
+    graphviz += nodo
+
+    for i in range(1, terreno.dimension_x + 1):
+        graphviz += "{rank = same; Fila"+str(i)+";"
+        for j in range(1, terreno.dimension_y + 1):
+            graphviz += "nodo"+str(i)+"_"+str(j)+";"
+            if terreno.dimension_y  == j and terreno.dimension_x != i:
+                graphviz += "}\n"
+
+    graphviz += "}"
+
+    for j in range(1, terreno.dimension_x + 1):
+            graphviz += "Fila"+str(j)+"->"+"nodo"+str(j)+"_"+str(1)+";"
+
+    for j in range(1, terreno.dimension_y + 1):
+            graphviz += "Columna"+str(j)+"->"+"nodo"+str(1)+"_"+str(j)+";"
+
+
+    for i in range(1, terreno.dimension_x):
+        for j in range(1, terreno.dimension_y + 1):
+            graphviz += ("nodo"+str(i)+"_"+str(j)+"-> nodo"+str(i+1)+"_"+str(j)+";\n")
+
+    for i in range(1, terreno.dimension_x + 1):
+        for j in range(1, terreno.dimension_y):
+            graphviz += ("nodo"+str(i)+"_"+str(j)+"-> nodo"+str(i)+"_"+str(j+1)+";\n")
+
+    
+    graphviz += """}
+    }""" 
+
+    miArchivo = open('graphviz.dot', 'w')
+    miArchivo.write(graphviz)
+    miArchivo.close()
+    system('dot -Tpng graphviz.dot -o graphviz.png')
+    system('cd ./graphviz.png')
+    startfile('graphviz.png')
+
+    
+    
 
 def mostrar_datos():
     print("""Rony Ormandy Ortíz Alvarez
@@ -444,7 +533,14 @@ def menu():
             mostrar_datos()
         
         elif opcion == '5':
-            generar_grafica()
+            print("Los nombres de los terrenos son: ")
+            lista_trayectorias.imprimir_terrenos()
+            nombre_terreno = input("Ingrese el nombre del terreno que desea generar la grafica: ")
+            terreno_grafica = lista_trayectorias.get_terreno(nombre_terreno)
+            
+           # rutas = input("Escriba la ruta: ")
+
+            generar_grafica(terreno_grafica)
         
         elif opcion != '6':
             print("Opcion incorrecta\n")

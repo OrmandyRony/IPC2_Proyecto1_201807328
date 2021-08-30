@@ -3,6 +3,7 @@ from posicion import Posicion
 class Lista_posiciones():
     def __init__(self) -> None:
         self.inicio = None
+        self.fin = None
         self.tamano = 0
         self.consumo_combustible_terreno = 0
     
@@ -18,6 +19,7 @@ class Lista_posiciones():
             while temporal.siguiente is not None:
                 temporal = temporal.siguiente
             temporal.siguiente = nueva_posicion
+            self.fin = nueva_posicion
             nueva_posicion.anterior = temporal
     
     def mostrar_posiciones(self):

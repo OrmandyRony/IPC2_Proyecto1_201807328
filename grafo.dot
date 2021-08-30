@@ -1,0 +1,73 @@
+digraph L{
+    node[shape = ellipse fillcolor = "#FFEDBB" style = filled]
+    
+
+    subgraph cluster_p{
+        label = "Terreno"
+        bgcolor = "white"
+        raiz[label = "0,0"]
+        edge[dir = "none"]
+        /*Aqui creamos las cabeceras de las filas */
+        Fila1[label = "1", group = 1];
+        Fila2[label = "2", group = 1];
+       
+        
+        /*Aqui enlazamos los nodos de las filas */
+        Fila1->Fila2;
+    
+       
+  
+       /*Aqui enlazamos los nodos de las filas */
+       Columna1[label = "1", group = 2, fillcolor = yellow];
+       Columna2[label = "2", group = 3, fillcolor = yellow];
+       Columna3[label = "3", group = 4, fillcolor = yellow];
+  
+
+       /*Aqui enlazar los nodos de las cabeceras de las columnas */
+       Columna1->Columna2
+       Columna2->Columna3
+      
+
+       /*Aqui vamos a unir la raiz a las filas y a las columanas*/
+       raiz -> Fila1;
+       raiz -> Columna1;
+       /*Aqui vamos a alinear cada nodo cabecera de las columnas*/
+       {rank = same; raiz; Columna1; Columna2; Columna3}
+        nodo1_1[label="1,1", fillcolor = green, group = 2]
+        nodo1_2[label="1,2", fillcolor = green, group = 3]
+        nodo1_3[label="1,3", fillcolor = green, group = 4]
+        nodo2_1[label="2,1", fillcolor = green, group = 2]
+        nodo2_2[label="2,2", fillcolor = green, group = 3]
+        nodo2_3[label="2,3", fillcolor = green, group = 4]
+
+        /*Ahora alineamos fila por fila*/
+        Fila1 -> nodo1_1;
+        {rank = same; Fila1; nodo1_1; nodo1_2; nodo1_3}
+
+        Fila2 -> nodo2_1
+        {rank = same; Fila2; nodo2_1; nodo2_2; nodo2_3}
+        
+       
+        
+        
+        /*aqui enlazamos las columnas */
+        Columna1 -> nodo1_1;
+        Columna2 -> nodo1_2;
+        Columna3 -> nodo1_3
+     
+        
+       
+   
+
+     
+        nodo1_1 -> nodo1_2;
+        nodo1_2 -> nodo2_2;
+        nodo1_2 -> nodo1_3;
+        nodo1_3 -> nodo2_3
+        nodo1_1 -> nodo2_1;
+        nodo2_1 -> nodo2_2;
+        nodo2_2 -> nodo2_3
+
+
+    }
+}
